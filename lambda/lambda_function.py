@@ -8,7 +8,7 @@ from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model import Response
 
 # Set your OpenAI API key
-openai.api_key = "substitua-pela-sua-chave-da-openai"
+openai.api_key = ""
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -24,7 +24,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Bem vindo ao Chat 'Gepetê Quatro' da 'Open ei ai'! Qual a sua pergunta?"
+        speak_output = "Bem vindo a mente do Túlio! Qual a sua pergunta?"
 
         return (
             handler_input.response_builder
@@ -42,8 +42,17 @@ class GptQueryIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         query = handler_input.request_envelope.request.intent.slots["query"].value
+        
+        # Se o usuário responder "não" após "Alguma outra pergunta?"
+        if query.lower() == "não" or query.lower() == "nao":
+            speak_output = "Tudo bem! Se precisar, estou aqui para ajudar. Até mais!"
+            return (
+                handler_input.response_builder
+                    .speak(speak_output)
+                    .response
+            )
+        
         response = generate_gpt_response(query)
-
         return (
                 handler_input.response_builder
                     .speak(response)
@@ -79,7 +88,7 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Saindo do modo Chat Gepetê."
+        speak_output = "Saindo do modo mente do Túlio."
 
         return (
             handler_input.response_builder
